@@ -15,10 +15,11 @@ describe("API: /api/categories", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
-        .then(({ body: { categories } }) => {
-          expect(categories).toHaveLength(4);
-          expect(categories).toBeInstanceOf(Array);
-          categories.forEach((category) => {
+        .then(({ _body }) => {
+          console.log(_body);
+          expect(_body).toHaveLength(4);
+          expect(_body).toBeInstanceOf(Array);
+          _body.forEach((category) => {
             expect(category).toEqual(
               expect.objectContaining({
                 slug: expect.any(String),
