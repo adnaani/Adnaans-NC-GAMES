@@ -1,14 +1,14 @@
 # Adnaans Games API
 
-## How to clone this locally
+## How to clone my repository locally
 
 1 - clone the repository down locally using this command in your terminal:
 
 ```git
-https://github.com/adnaani/Adnaans-NC-GAMES
+git clone https://github.com/adnaani/Adnaans-NC-GAMES
 ```
 
-2 - cd into the directory using the terminal command adn open it:
+2 - cd into the directory using the terminal command:
 
 ```
 cd Adnaans-NC-GAMES
@@ -20,18 +20,28 @@ cd Adnaans-NC-GAMES
 code .
 ```
 
-4 - install the required dependencies using:
+4 - install the required dependencies using in the terminal:
 
 ```git
-run "npm i"
+npm i
 ```
 
-5 - create these 2 files in the repository with the file contents:
+5 - create these 2 files in the repository:
 
 ```git
 
-[file name = '.env.test' && file contents = PGDATABASE=nc_games],
+'.env.test'
 
-[file name = '.env.development' && file contents = PGDATABASE=nc_games_test]
+.env.development'
+
+```
+
+6 - the file contents of the files above should correspond in this order:
+
+```git
+
+PGDATABASE=nc_games
+
+PGDATABASE=nc_games_test
 
 ```
