@@ -1,5 +1,6 @@
 const express = require("express");
-const { getAllCategories, getReviewById } = require("./controllers/categories");
+const { getAllCategories } = require("./controller/categories");
+const { getReviewById } = require("./controller/reviews");
 const app = express();
 app.use(express.json());
 
