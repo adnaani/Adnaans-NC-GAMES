@@ -69,6 +69,22 @@ describe("API: /api/reviews", () => {
     });
   });
 
+  describe("PATCH: /api/reviews/:review_id", () => {
+    test("201: responds with a votes incrementing by inc_vote", () => {
+      const review_id = 1;
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send({ inc_votes: 5 })
+        .expect(201)
+        .then(({ body: { review } }) => {
+          expect(review).toBeInstanceOf(Object);
+          expect(review.votes).toBe(6);
+          expect(review.review_id).toBe(1);
+        });
+    });
+  });
+
   describe("errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = "invalid_type";
