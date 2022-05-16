@@ -1,9 +1,11 @@
 const express = require("express");
-const { getAllCategories } = require("./controllers/categories");
+const { getAllCategories, getReviewById } = require("./controllers/categories");
 const app = express();
 app.use(express.json());
 
 app.get("/api/categories", getAllCategories);
+
+app.get("/api/reviews/:review_id", getReviewById);
 
 app.all("/*", (req, res, next) => {
   res.status(404).send({ message: "invalid endpoint" });
