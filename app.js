@@ -5,7 +5,7 @@ app.use(express.json());
 
 app.get("/api/categories", getAllCategories);
 
-app.use("/*", (req, res, next) => {
+app.all("/*", (req, res, next) => {
   res.status(404).send({ message: "invalid endpoint" });
 });
 

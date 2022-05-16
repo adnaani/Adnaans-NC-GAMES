@@ -13,7 +13,7 @@ describe("API: /api/categories", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
-        .then(({ _body: { categories } }) => {
+        .then(({ body: { categories } }) => {
           expect(categories).toHaveLength(4);
           expect(categories).toBeInstanceOf(Array);
           categories.forEach((category) => {
@@ -33,7 +33,7 @@ describe("API: /api/categories", () => {
       return request(app)
         .get("/api/invalid_categories")
         .expect(404)
-        .then(({ _body: { message } }) => {
+        .then(({ body: { message } }) => {
           expect(message).toBe("invalid endpoint");
         });
     });
