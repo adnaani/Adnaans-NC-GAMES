@@ -1,0 +1,16 @@
+const express = require("express");
+const { getAllCategories } = require("./controllers/categories");
+const app = express();
+app.use(express.json());
+
+app.get("/api/categories", getAllCategories);
+
+app.all("/*", (req, res, next) => {
+  res.status(404).send({ message: "invalid endpoint" });
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500).send({ message: "internal server error" });
+});
+module.exports = app;
