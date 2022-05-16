@@ -30,4 +30,14 @@ describe("API: /api/categories", () => {
         });
     });
   });
+  describe("errors: /api/categories", () => {
+    test("404: responds with error message page not found", () => {
+      return request(app)
+        .get("/api/invalid_categories")
+        .expect(404)
+        .then(({ _body: { message } }) => {
+          expect(message).toBe("invalid endpoint");
+        });
+    });
+  });
 });
