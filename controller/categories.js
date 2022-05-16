@@ -1,4 +1,4 @@
-const { selectAllCategories } = require("../models/categories");
+const { selectAllCategories } = require("../model/categories");
 
 exports.getAllCategories = (req, res, next) => {
   selectAllCategories()
