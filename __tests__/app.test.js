@@ -1,10 +1,8 @@
-process.env.NODE_ENV = "test";
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const request = require("supertest");
 const app = require("../app.js");
 const db = require("../db/connection");
-// require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -15,11 +13,10 @@ describe("API: /api/categories", () => {
       return request(app)
         .get("/api/categories")
         .expect(200)
-        .then(({ _body }) => {
-          console.log(_body);
-          expect(_body).toHaveLength(4);
-          expect(_body).toBeInstanceOf(Array);
-          _body.forEach((category) => {
+        .then(({ _body: { categories } }) => {
+          expect(categories).toHaveLength(4);
+          expect(categories).toBeInstanceOf(Array);
+          categories.forEach((category) => {
             expect(category).toEqual(
               expect.objectContaining({
                 slug: expect.any(String),
@@ -30,6 +27,7 @@ describe("API: /api/categories", () => {
         });
     });
   });
+
   describe("errors: /api/categories", () => {
     test("404: responds with error message page not found", () => {
       return request(app)
