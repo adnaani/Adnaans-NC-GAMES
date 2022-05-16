@@ -70,13 +70,22 @@ describe("API: /api/reviews", () => {
   });
 
   describe("errors: /api/reviews/:review_id", () => {
-    test("400: responds respond with an error message when passed an endpoint with an incorrect data", () => {
+    test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = "invalid_type";
       return request(app)
         .get(`/api/reviews/${review_id}`)
         .expect(400)
         .then(({ body: { message } }) => {
           expect(message).toBe("id is not valid");
+        });
+    });
+    test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
+      const review_id = 999;
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(`review with id: ${review_id} does not exist`);
         });
     });
   });
