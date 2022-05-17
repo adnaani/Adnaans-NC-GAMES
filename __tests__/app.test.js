@@ -172,7 +172,7 @@ describe("API: /api/reviews", () => {
 
 describe("API: /api/users", () => {
   describe("GET: /api/users", () => {
-    test.only("200: responds with an array of user objects containing the properties of username, name and avatar_url", () => {
+    test("200: responds with an array of user objects containing the properties of username, name and avatar_url", () => {
       return request(app)
         .get("/api/users/")
         .expect(200)
@@ -188,6 +188,16 @@ describe("API: /api/users", () => {
               })
             );
           });
+        });
+    });
+  });
+  describe("GET - errors: /api/users", () => {
+    test("404: responds with error message", () => {
+      return request(app)
+        .get("/api/invalid_users")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("invalid endpoint");
         });
     });
   });
