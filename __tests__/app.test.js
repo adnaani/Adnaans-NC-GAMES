@@ -27,8 +27,7 @@ describe("API: /api/categories", () => {
         });
     });
   });
-
-  describe("errors: /api/categories", () => {
+  describe("GET - errors: /api/categories", () => {
     test("404: responds with error message page not found", () => {
       return request(app)
         .get("/api/invalid_categories")
@@ -68,15 +67,14 @@ describe("API: /api/reviews", () => {
         });
     });
   });
-
-  describe("errors: /api/reviews/:review_id", () => {
+  describe("GET - errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = "invalid_type";
       return request(app)
         .get(`/api/reviews/${review_id}`)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("id is not valid");
+          expect(message).toBe("input is not valid");
         });
     });
     test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
@@ -84,6 +82,88 @@ describe("API: /api/reviews", () => {
       return request(app)
         .get(`/api/reviews/${review_id}`)
         .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(`review with id: ${review_id} does not exist`);
+        });
+    });
+  });
+
+  describe("PATCH: /api/reviews/:review_id", () => {
+    test("201: responds with a votes incrementing by inc_vote", () => {
+      const review_id = 1;
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send({ inc_votes: 5 })
+        .expect(201)
+        .then(({ body: { review } }) => {
+          expect(review.votes).toBe(6);
+          expect(review.review_id).toBe(1);
+        });
+    });
+    test("201: responds with a votes decrementing by inc_vote", () => {
+      const review_id = 1;
+      const inc_vote = { inc_votes: -100 };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .send(inc_vote)
+        .expect(201)
+        .then(({ body: { review } }) => {
+          expect(review).toBeInstanceOf(Object);
+          expect(review.votes).toBe(-99);
+          expect(review.review_id).toBe(1);
+        });
+    });
+  });
+
+  describe("PATCH - errors: /api/reviews/:review_id", () => {
+    test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
+      const review_id = 1;
+      const inc_vote = { inc_votes: "NaN" };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .expect(400)
+        .send(inc_vote)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
+        });
+    });
+    test("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
+      const review_id = "invalid";
+      const inc_vote = { inc_votes: "3" };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .expect(400)
+        .send(inc_vote)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
+        });
+    });
+
+    test("400: responds with an error message when passed an endpoint where inc_vote key missing", () => {
+      const review_id = 1;
+      const inc_vote = { invalid_vote: 5 };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .expect(400)
+        .send(inc_vote)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
+        });
+    });
+
+    test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
+      const review_id = 999;
+      const inc_vote = { inc_votes: "3" };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .expect(404)
+        .send(inc_vote)
         .then(({ body: { message } }) => {
           expect(message).toBe(`review with id: ${review_id} does not exist`);
         });
