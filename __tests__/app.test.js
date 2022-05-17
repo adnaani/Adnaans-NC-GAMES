@@ -66,6 +66,32 @@ describe("API: /api/reviews", () => {
           );
         });
     });
+    test("200: responds with a review object containing an additional key of comment count", () => {
+      const review_id = 2;
+      const time = new Date(1610964101251).toISOString();
+
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeInstanceOf(Object);
+          expect(reviews).toEqual(
+            expect.objectContaining({
+              review_id: 2,
+              title: "Jenga",
+              category: "dexterity",
+              designer: "Leslie Scott",
+              owner: "philippaclaire9",
+              review_body: "Fiddly fun for all the family",
+              review_img_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              created_at: time,
+              votes: 5,
+              comment_count: "3",
+            })
+          );
+        });
+    });
   });
   describe("GET - errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
