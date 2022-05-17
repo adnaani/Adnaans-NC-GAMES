@@ -116,7 +116,6 @@ describe("API: /api/reviews", () => {
         });
     });
   });
-
   describe("PATCH - errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = 1;
@@ -152,7 +151,7 @@ describe("API: /api/reviews", () => {
         .expect(400)
         .send(inc_vote)
         .then(({ body: { message } }) => {
-          expect(message).toBe("input is not valid");
+          expect(message).toBe("input is missing");
         });
     });
 
@@ -166,6 +165,39 @@ describe("API: /api/reviews", () => {
         .send(inc_vote)
         .then(({ body: { message } }) => {
           expect(message).toBe(`review with id: ${review_id} does not exist`);
+        });
+    });
+  });
+});
+
+describe("API: /api/users", () => {
+  describe("GET: /api/users", () => {
+    test("200: responds with an array of user objects containing the properties of username, name and avatar_url", () => {
+      return request(app)
+        .get("/api/users/")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users).toHaveLength(4);
+          expect(users).toBeInstanceOf(Array);
+          users.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+                name: expect.any(String),
+                avatar_url: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+  });
+  describe("GET - errors: /api/users", () => {
+    test("404: responds with error message", () => {
+      return request(app)
+        .get("/api/invalid_users")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("invalid endpoint");
         });
     });
   });
