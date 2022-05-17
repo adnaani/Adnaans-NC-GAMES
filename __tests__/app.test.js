@@ -67,8 +67,9 @@ describe("API: /api/reviews", () => {
         });
     });
   });
+
   describe("GET - Comment Count: /api/reviews/:review_id", () => {
-    test("200: responds with a review object containing an additional key of comment count with the value of 0 when the count does not exist", () => {
+    test("200: responds with a review object containing an additional key of comment count with the value of 0 when the comment does not exist", () => {
       const review_id = 9;
       const time = new Date(1610964101251).toISOString();
 
@@ -95,7 +96,7 @@ describe("API: /api/reviews", () => {
           );
         });
     });
-    test("200: responds with a review object containing an additional key of comment count when the count is more than 0", () => {
+    test("200: responds with a review object containing an additional key of comment count when the comment is more than 0", () => {
       const review_id = 2;
       const time = new Date(1610964101251).toISOString();
 
