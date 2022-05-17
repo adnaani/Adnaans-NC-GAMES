@@ -66,7 +66,36 @@ describe("API: /api/reviews", () => {
           );
         });
     });
-    test("200: responds with a review object containing an additional key of comment count", () => {
+  });
+  describe("GET - Comment Count: /api/reviews/:review_id", () => {
+    test("200: responds with a review object containing an additional key of comment count with the value of 0 when the count does not exist", () => {
+      const review_id = 9;
+      const time = new Date(1610964101251).toISOString();
+
+      return request(app)
+        .get(`/api/reviews/${review_id}`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeInstanceOf(Object);
+          expect(reviews).toEqual(
+            expect.objectContaining({
+              review_id: 9,
+              title: "A truly Quacking Game; Quacks of Quedlinburg",
+              category: "social deduction",
+              designer: "Wolfgang Warsch",
+              owner: "mallionaire",
+              review_body:
+                "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
+              review_img_url:
+                "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+              created_at: time,
+              votes: 10,
+              comment_count: "0",
+            })
+          );
+        });
+    });
+    test("200: responds with a review object containing an additional key of comment count when the count is more than 0", () => {
       const review_id = 2;
       const time = new Date(1610964101251).toISOString();
 
@@ -93,6 +122,7 @@ describe("API: /api/reviews", () => {
         });
     });
   });
+
   describe("GET - errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = "invalid_type";
