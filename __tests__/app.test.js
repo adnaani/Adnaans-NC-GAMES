@@ -97,7 +97,6 @@ describe("API: /api/reviews", () => {
         .send({ inc_votes: 5 })
         .expect(201)
         .then(({ body: { review } }) => {
-          expect(review).toBeInstanceOf(Object);
           expect(review.votes).toBe(6);
           expect(review.review_id).toBe(1);
         });
