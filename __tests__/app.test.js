@@ -74,7 +74,7 @@ describe("API: /api/reviews", () => {
         .get(`/api/reviews/${review_id}`)
         .expect(400)
         .then(({ body: { message } }) => {
-          expect(message).toBe("id is not valid");
+          expect(message).toBe("input is not valid");
         });
     });
     test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
@@ -119,7 +119,7 @@ describe("API: /api/reviews", () => {
   });
 
   describe("PATCH - errors: /api/reviews/:review_id", () => {
-    test.only("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
+    test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = 1;
       const inc_vote = { inc_votes: "NaN" };
 
@@ -128,10 +128,10 @@ describe("API: /api/reviews", () => {
         .expect(400)
         .send(inc_vote)
         .then(({ body: { message } }) => {
-          expect(message).toBe("id is not valid");
+          expect(message).toBe("input is not valid");
         });
     });
-    test.only("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
+    test("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
       const review_id = "invalid";
       const inc_vote = { inc_votes: "3" };
 
@@ -140,11 +140,11 @@ describe("API: /api/reviews", () => {
         .expect(400)
         .send(inc_vote)
         .then(({ body: { message } }) => {
-          expect(message).toBe("id is not valid");
+          expect(message).toBe("input is not valid");
         });
     });
 
-    test.only("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
+    test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
       const review_id = 999;
       const inc_vote = { inc_votes: "3" };
 
