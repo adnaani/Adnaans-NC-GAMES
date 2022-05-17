@@ -144,6 +144,19 @@ describe("API: /api/reviews", () => {
         });
     });
 
+    test("400: responds with an error message when passed an endpoint where inc_vote key missing", () => {
+      const review_id = 1;
+      const inc_vote = { invalid_vote: 5 };
+
+      return request(app)
+        .patch(`/api/reviews/${review_id}`)
+        .expect(400)
+        .send(inc_vote)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
+        });
+    });
+
     test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
       const review_id = 999;
       const inc_vote = { inc_votes: "3" };
