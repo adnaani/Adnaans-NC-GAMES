@@ -3,6 +3,7 @@ const testData = require("../db/data/test-data");
 const request = require("supertest");
 const app = require("../app.js");
 const db = require("../db/connection");
+require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -40,6 +41,40 @@ describe("API: /api/categories", () => {
 });
 
 describe("API: /api/reviews", () => {
+  describe("GET: /api/reviews", () => {
+    test("200: responds with array of reviews objects", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toHaveLength(13);
+          expect(reviews).toBeInstanceOf(Array);
+          reviews.forEach((review) => {
+            expect(review).toEqual(
+              expect.objectContaining({
+                review_id: expect.any(Number),
+                title: expect.any(String),
+                designer: expect.any(String),
+                owner: expect.any(String),
+                review_img_url: expect.any(String),
+                category: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: responds with array of reviews objects sorted in ascending order by the date", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at");
+        });
+    });
+  });
   describe("GET: /api/reviews/:review_id", () => {
     test("200: responds with a review object containing the keys: review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at,", () => {
       const review_id = 1;
