@@ -76,246 +76,268 @@ describe("API: /api/reviews", () => {
     });
   });
 
-  describe("GET: /api/reviews/:review_id", () => {
-    test("200: responds with a review object containing the keys: review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at,", () => {
-      const review_id = 1;
-      const time = new Date(1610964020514).toISOString();
+  describe("PARAM: /api/reviews/:review_id", () => {
+    describe("GET: /api/reviews/:review_id", () => {
+      test("200: responds with a review object containing the keys: review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at,", () => {
+        const review_id = 1;
+        const time = new Date(1610964020514).toISOString();
 
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(200)
-        .then(({ body: { reviews } }) => {
-          expect(reviews).toBeInstanceOf(Object);
-          expect(reviews).toEqual(
-            expect.objectContaining({
-              review_id: 1,
-              title: "Agricola",
-              designer: "Uwe Rosenberg",
-              owner: "mallionaire",
-              review_img_url:
-                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-              review_body: "Farmyard fun!",
-              category: "euro game",
-              created_at: time,
-              votes: 1,
-            })
-          );
-        });
-    });
-  });
-  describe("GET - Comment Count: /api/reviews/:review_id", () => {
-    test("200: responds with a review object containing an additional key of comment count with the value of 0 when the comment does not exist", () => {
-      const review_id = 9;
-      const time = new Date(1610964101251).toISOString();
-
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(200)
-        .then(({ body: { reviews } }) => {
-          expect(reviews).toBeInstanceOf(Object);
-          expect(reviews).toEqual(
-            expect.objectContaining({
-              review_id: 9,
-              title: "A truly Quacking Game; Quacks of Quedlinburg",
-              category: "social deduction",
-              designer: "Wolfgang Warsch",
-              owner: "mallionaire",
-              review_body:
-                "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
-              review_img_url:
-                "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
-              created_at: time,
-              votes: 10,
-              comment_count: "0",
-            })
-          );
-        });
-    });
-    test("200: responds with a review object containing an additional key of comment count when the comment is more than 0", () => {
-      const review_id = 2;
-      const time = new Date(1610964101251).toISOString();
-
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(200)
-        .then(({ body: { reviews } }) => {
-          expect(reviews).toBeInstanceOf(Object);
-          expect(reviews).toEqual(
-            expect.objectContaining({
-              review_id: 2,
-              title: "Jenga",
-              category: "dexterity",
-              designer: "Leslie Scott",
-              owner: "philippaclaire9",
-              review_body: "Fiddly fun for all the family",
-              review_img_url:
-                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-              created_at: time,
-              votes: 5,
-              comment_count: "3",
-            })
-          );
-        });
-    });
-  });
-  describe("GET - errors: /api/reviews/:review_id", () => {
-    test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
-      const review_id = "invalid_type";
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(400)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("input is not valid");
-        });
-    });
-    test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
-      const review_id = 999;
-      return request(app)
-        .get(`/api/reviews/${review_id}`)
-        .expect(404)
-        .then(({ body: { message } }) => {
-          expect(message).toBe(`review with id: ${review_id} does not exist`);
-        });
-    });
-  });
-
-  describe("GET: /api/reviews/:review_id/comment", () => {
-    test("200: responds with a comment object", () => {
-      const review_id = 3;
-
-      return request(app)
-        .get(`/api/reviews/${review_id}/comment`)
-        .expect(200)
-        .then(({ body: { comments } }) => {
-          expect(comments).toHaveLength(3);
-          expect(comments).toBeInstanceOf(Array);
-          comments.forEach((comment) => {
-            expect(comment).toEqual(
+        return request(app)
+          .get(`/api/reviews/${review_id}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeInstanceOf(Object);
+            expect(reviews).toEqual(
               expect.objectContaining({
-                comment_id: expect.any(Number),
-                body: expect.any(String),
-                votes: expect.any(Number),
-                author: expect.any(String),
-                review_id: expect.any(Number),
-                created_at: expect.any(String),
+                review_id: 1,
+                title: "Agricola",
+                designer: "Uwe Rosenberg",
+                owner: "mallionaire",
+                review_img_url:
+                  "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                review_body: "Farmyard fun!",
+                category: "euro game",
+                created_at: time,
+                votes: 1,
               })
             );
           });
-        });
+      });
     });
-    test("200: responds with a empty comment array when review exists but no comment posted yet", () => {
-      const review_id = 1;
+    describe("GET - Comment Count: /api/reviews/:review_id", () => {
+      test("200: responds with a review object containing an additional key of comment count with the value of 0 when the comment does not exist", () => {
+        const review_id = 9;
+        const time = new Date(1610964101251).toISOString();
 
-      return request(app)
-        .get(`/api/reviews/${review_id}/comment`)
-        .expect(200)
-        .then(({ body: { comments } }) => {
-          expect(comments).toBeInstanceOf(Object);
-          expect(comments).toEqual([]);
-        });
+        return request(app)
+          .get(`/api/reviews/${review_id}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeInstanceOf(Object);
+            expect(reviews).toEqual(
+              expect.objectContaining({
+                review_id: 9,
+                title: "A truly Quacking Game; Quacks of Quedlinburg",
+                category: "social deduction",
+                designer: "Wolfgang Warsch",
+                owner: "mallionaire",
+                review_body:
+                  "Ever wish you could try your hand at mixing potions? Quacks of Quedlinburg will have you mixing up a homebrew like no other. Each player buys different ingredients (chips) that are drawn at random to reach the most points, but watch out, you'd better not let your cauldrom explode.",
+                review_img_url:
+                  "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+                created_at: time,
+                votes: 10,
+                comment_count: "0",
+              })
+            );
+          });
+      });
+      test("200: responds with a review object containing an additional key of comment count when the comment is more than 0", () => {
+        const review_id = 2;
+        const time = new Date(1610964101251).toISOString();
+
+        return request(app)
+          .get(`/api/reviews/${review_id}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeInstanceOf(Object);
+            expect(reviews).toEqual(
+              expect.objectContaining({
+                review_id: 2,
+                title: "Jenga",
+                category: "dexterity",
+                designer: "Leslie Scott",
+                owner: "philippaclaire9",
+                review_body: "Fiddly fun for all the family",
+                review_img_url:
+                  "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                created_at: time,
+                votes: 5,
+                comment_count: "3",
+              })
+            );
+          });
+      });
+    });
+    describe("GET - errors: /api/reviews/:review_id", () => {
+      test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
+        const review_id = "invalid_type";
+        return request(app)
+          .get(`/api/reviews/${review_id}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+      test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
+        const review_id = 999;
+        return request(app)
+          .get(`/api/reviews/${review_id}`)
+          .expect(404)
+          .then(({ body: { message } }) => {
+            expect(message).toBe(`review with id: ${review_id} does not exist`);
+          });
+      });
+    });
+
+    describe("PATCH: /api/reviews/:review_id", () => {
+      test("200: responds with a votes incrementing by inc_vote", () => {
+        const review_id = 1;
+
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .send({ inc_votes: 5 })
+          .expect(200)
+          .then(({ body: { review } }) => {
+            expect(review.votes).toBe(6);
+            expect(review.review_id).toBe(1);
+          });
+      });
+      test("200: responds with a votes decrementing by inc_vote", () => {
+        const review_id = 1;
+        const inc_vote = { inc_votes: -100 };
+
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .send(inc_vote)
+          .expect(200)
+          .then(({ body: { review } }) => {
+            expect(review).toBeInstanceOf(Object);
+            expect(review.votes).toBe(-99);
+            expect(review.review_id).toBe(1);
+          });
+      });
+    });
+    describe("PATCH - errors: /api/reviews/:review_id", () => {
+      test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
+        const review_id = 1;
+        const inc_vote = { inc_votes: "NaN" };
+
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .expect(400)
+          .send(inc_vote)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+      test("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
+        const review_id = "invalid";
+        const inc_vote = { inc_votes: "3" };
+
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .expect(400)
+          .send(inc_vote)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+
+      test("400: responds with an error message when passed an endpoint where inc_vote key missing", () => {
+        const review_id = 1;
+        const inc_vote = { invalid_vote: 5 };
+
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .expect(400)
+          .send(inc_vote)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is missing");
+          });
+      });
+
+      test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
+        const review_id = 999;
+        const inc_vote = { inc_votes: "3" };
+
+        return request(app)
+          .patch(`/api/reviews/${review_id}`)
+          .expect(404)
+          .send(inc_vote)
+          .then(({ body: { message } }) => {
+            expect(message).toBe(`review with id: ${review_id} does not exist`);
+          });
+      });
     });
   });
-  describe("GET - errors: /api/reviews/:review_id/comment", () => {
-    test("400: responds with a error message when wrong data is passed in the review_id", () => {
-      const review_id = "invalid_id";
 
-      return request(app)
-        .get(`/api/reviews/${review_id}/comment`)
-        .expect(400)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("input is not valid");
-        });
+  describe("PARAM: /api/reviews/:review_id/comment", () => {
+    describe("GET: /api/reviews/:review_id/comment", () => {
+      test("200: responds with a comment object", () => {
+        const review_id = 3;
+
+        return request(app)
+          .get(`/api/reviews/${review_id}/comments`)
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(3);
+            expect(comments).toBeInstanceOf(Array);
+            comments.forEach((comment) => {
+              expect(comment).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  body: expect.any(String),
+                  votes: expect.any(Number),
+                  author: expect.any(String),
+                  review_id: expect.any(Number),
+                  created_at: expect.any(String),
+                })
+              );
+            });
+          });
+      });
+      test("200: responds with a empty comment array when review exists but no comment posted yet", () => {
+        const review_id = 1;
+
+        return request(app)
+          .get(`/api/reviews/${review_id}/comments`)
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toBeInstanceOf(Object);
+            expect(comments).toEqual([]);
+          });
+      });
     });
-    test("404 responds with a error message when the input is correct however the number does not exist in the data base", () => {
-      const review_id = 999;
+    describe("GET - errors: /api/reviews/:review_id/comments", () => {
+      test("400: responds with a error message when wrong data is passed in the review_id", () => {
+        const review_id = "invalid_id";
 
-      return request(app)
-        .get(`/api/${review_id}/comment`)
-        .expect(404)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("invalid endpoint");
-        });
-    });
-  });
+        return request(app)
+          .get(`/api/reviews/${review_id}/comments`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+      test("404 responds with a error message when the input is correct however the number does not exist in the data base", () => {
+        const review_id = 999;
 
-  describe("PATCH: /api/reviews/:review_id", () => {
-    test("200: responds with a votes incrementing by inc_vote", () => {
-      const review_id = 1;
-
-      return request(app)
-        .patch(`/api/reviews/${review_id}`)
-        .send({ inc_votes: 5 })
-        .expect(200)
-        .then(({ body: { review } }) => {
-          expect(review.votes).toBe(6);
-          expect(review.review_id).toBe(1);
-        });
-    });
-    test("200: responds with a votes decrementing by inc_vote", () => {
-      const review_id = 1;
-      const inc_vote = { inc_votes: -100 };
-
-      return request(app)
-        .patch(`/api/reviews/${review_id}`)
-        .send(inc_vote)
-        .expect(200)
-        .then(({ body: { review } }) => {
-          expect(review).toBeInstanceOf(Object);
-          expect(review.votes).toBe(-99);
-          expect(review.review_id).toBe(1);
-        });
-    });
-  });
-  describe("PATCH - errors: /api/reviews/:review_id", () => {
-    test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
-      const review_id = 1;
-      const inc_vote = { inc_votes: "NaN" };
-
-      return request(app)
-        .patch(`/api/reviews/${review_id}`)
-        .expect(400)
-        .send(inc_vote)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("input is not valid");
-        });
-    });
-    test("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
-      const review_id = "invalid";
-      const inc_vote = { inc_votes: "3" };
-
-      return request(app)
-        .patch(`/api/reviews/${review_id}`)
-        .expect(400)
-        .send(inc_vote)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("input is not valid");
-        });
+        return request(app)
+          .get(`/api/${review_id}/comments`)
+          .expect(404)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("invalid endpoint");
+          });
+      });
     });
 
-    test("400: responds with an error message when passed an endpoint where inc_vote key missing", () => {
-      const review_id = 1;
-      const inc_vote = { invalid_vote: 5 };
+    describe("POST: /api/reviews/:review_id/comments", () => {
+      test("201: responds with new comment", () => {
+        const review_id = 1;
+        const newComment = {
+          body: "This is a cool game",
+          author: "mallionaire",
+        };
 
-      return request(app)
-        .patch(`/api/reviews/${review_id}`)
-        .expect(400)
-        .send(inc_vote)
-        .then(({ body: { message } }) => {
-          expect(message).toBe("input is missing");
-        });
-    });
-
-    test("404: responds with an error message when passed an endpoint with correct data type but does not exist", () => {
-      const review_id = 999;
-      const inc_vote = { inc_votes: "3" };
-
-      return request(app)
-        .patch(`/api/reviews/${review_id}`)
-        .expect(404)
-        .send(inc_vote)
-        .then(({ body: { message } }) => {
-          expect(message).toBe(`review with id: ${review_id} does not exist`);
-        });
+        return request(app)
+          .post(`/api/reviews/${review_id}/comments`)
+          .send(newComment)
+          .expect(201)
+          .then(({ body: { comment } }) => {
+            expect(comment).toEqual(newComment);
+          });
+      });
     });
   });
 });
