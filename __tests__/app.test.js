@@ -76,6 +76,17 @@ describe("API: /api/reviews", () => {
     });
   });
 
+  describe("QUERIES: /api/reviews", () => {
+    test("200: responds with array of reviews object sorted in ascending order, date defautlt", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at");
+        });
+    });
+  });
+
   describe("PARAM: /api/reviews/:review_id", () => {
     describe("GET: /api/reviews/:review_id", () => {
       test("200: responds with a review object containing the keys: review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at,", () => {
@@ -193,6 +204,7 @@ describe("API: /api/reviews", () => {
             expect(review.review_id).toBe(1);
           });
       });
+
       test("200: responds with a votes decrementing by inc_vote", () => {
         const review_id = 1;
         const inc_vote = { inc_votes: -100 };
@@ -221,6 +233,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input is not valid");
           });
       });
+
       test("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
         const review_id = "invalid";
         const inc_vote = { inc_votes: "3" };
@@ -310,6 +323,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input is not valid");
           });
       });
+
       test("404 responds with a error message when the input is correct however the number does not exist in the data base", () => {
         const review_id = 999;
 
@@ -354,6 +368,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input is missing");
           });
       });
+
       test("404: responds with error message when review_id in path does not exist", () => {
         const review_id = 999;
         const newComment = {
@@ -368,6 +383,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input does not exist");
           });
       });
+
       test("404: responds with error message when user does not exist", () => {
         const review_id = 2;
         const newComment = {
