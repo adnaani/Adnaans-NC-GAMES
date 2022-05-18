@@ -226,6 +226,16 @@ describe("API: /api/reviews", () => {
           expect(message).toBe("input is not valid");
         });
     });
+    test("404 responds with a error message when the input is correct however the number does not exist in the data base", () => {
+      const review_id = 999;
+
+      return request(app)
+        .get(`/api/${review_id}/comment`)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("invalid endpoint");
+        });
+    });
   });
 
   describe("PATCH: /api/reviews/:review_id", () => {
