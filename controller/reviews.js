@@ -20,7 +20,7 @@ exports.patchReviewById = (req, res, next) => {
 
   updateReviewById(review_id, body)
     .then((review) => {
-      res.status(201).send({ review });
+      res.status(200).send({ review });
     })
     .catch(next);
 };

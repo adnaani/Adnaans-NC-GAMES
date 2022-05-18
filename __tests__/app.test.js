@@ -239,26 +239,26 @@ describe("API: /api/reviews", () => {
   });
 
   describe("PATCH: /api/reviews/:review_id", () => {
-    test("201: responds with a votes incrementing by inc_vote", () => {
+    test("200: responds with a votes incrementing by inc_vote", () => {
       const review_id = 1;
 
       return request(app)
         .patch(`/api/reviews/${review_id}`)
         .send({ inc_votes: 5 })
-        .expect(201)
+        .expect(200)
         .then(({ body: { review } }) => {
           expect(review.votes).toBe(6);
           expect(review.review_id).toBe(1);
         });
     });
-    test("201: responds with a votes decrementing by inc_vote", () => {
+    test("200: responds with a votes decrementing by inc_vote", () => {
       const review_id = 1;
       const inc_vote = { inc_votes: -100 };
 
       return request(app)
         .patch(`/api/reviews/${review_id}`)
         .send(inc_vote)
-        .expect(201)
+        .expect(200)
         .then(({ body: { review } }) => {
           expect(review).toBeInstanceOf(Object);
           expect(review.votes).toBe(-99);
