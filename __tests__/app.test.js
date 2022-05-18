@@ -66,33 +66,39 @@ describe("API: /api/reviews", () => {
           });
         });
     });
-    test("200: responds with array of reviews objects sorted in ascending order by the date", () => {
+    test("200: responds with array of reviews objects sorted in descending order by the date", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
         .then(({ body: { reviews } }) => {
-          expect(reviews).toBeSortedBy("created_at");
+          expect(reviews).toBeSortedBy("created_at", {
+            descending: true,
+          });
         });
     });
   });
 
   describe("QUERIES: /api/reviews", () => {
     describe("GET - SORT_BY: /api/reviews", () => {
-      test("200: responds with array of reviews object sorted in ascending order by date default", () => {
+      test("200: responds with array of reviews object sorted in descending order by date default", () => {
         return request(app)
           .get("/api/reviews")
           .expect(200)
           .then(({ body: { reviews } }) => {
-            expect(reviews).toBeSortedBy("created_at");
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+            });
           });
       });
-      test("200: responds with array of reviews object sorted in ascending order by votes", () => {
+      test("200: responds with array of reviews object sorted in descending order by votes", () => {
         const query = "votes";
         return request(app)
           .get(`/api/reviews?sort_by=${query}`)
           .expect(200)
           .then(({ body: { reviews } }) => {
-            expect(reviews).toBeSortedBy(query);
+            expect(reviews).toBeSortedBy(query, {
+              descending: true,
+            });
           });
       });
     });
@@ -102,6 +108,40 @@ describe("API: /api/reviews", () => {
 
         return request(app)
           .get(`/api/reviews?sort_by=${query}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+    });
+
+    describe("GET - ORDER: /api/reviews", () => {
+      test("200: responds with array of reviews object sorted in descending order by default", () => {
+        return request(app)
+          .get(`/api/reviews`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+            });
+          });
+      });
+      test("200: responds with array of reviews object sorted in ascending order by created_at", () => {
+        const query = "ASC";
+        return request(app)
+          .get(`/api/reviews?order=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at");
+          });
+      });
+    });
+    describe("ORDER - error : /api/reviews", () => {
+      test("400: responds with error message when passed an endpoint with an incorrect data type", () => {
+        const query = "not_valid";
+
+        return request(app)
+          .get(`/api/reviews?order=${query}`)
           .expect(400)
           .then(({ body: { message } }) => {
             expect(message).toBe("input is not valid");

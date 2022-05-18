@@ -39,8 +39,12 @@ exports.updateReviewById = async (review_id, { inc_votes } = 0) => {
   return rows[0];
 };
 
-exports.selectAllReviews = async ({ sort_by = "created_at" }) => {
+exports.selectAllReviews = async ({
+  sort_by = "created_at",
+  order = "DESC",
+}) => {
   const validSortBy = ["created_at", "votes"];
+  const validOrderBy = ["DESC", "ASC"];
 
   let reviewsQueryStr = `
     SELECT reviews.*, COUNT(comments.review_id) AS comment_count
@@ -50,13 +54,19 @@ exports.selectAllReviews = async ({ sort_by = "created_at" }) => {
     GROUP BY reviews.review_id`;
 
   if (validSortBy.includes(sort_by)) {
-    reviewsQueryStr += ` ORDER BY ${sort_by}`;
+    reviewsQueryStr += ` ORDER BY reviews.${sort_by}`;
+  } else {
+    return Promise.reject({ status: 400, message: "input is not valid" });
+  }
+
+  if (validOrderBy.includes(order)) {
+    reviewsQueryStr += ` ${order}`;
   } else {
     return Promise.reject({ status: 400, message: "input is not valid" });
   }
 
   const { rows } = await db.query(reviewsQueryStr);
-  console.log(rows);
+
   return rows;
 };
 
