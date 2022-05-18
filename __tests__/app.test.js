@@ -75,6 +75,7 @@ describe("API: /api/reviews", () => {
         });
     });
   });
+
   describe("GET: /api/reviews/:review_id", () => {
     test("200: responds with a review object containing the keys: review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at,", () => {
       const review_id = 1;
@@ -102,7 +103,6 @@ describe("API: /api/reviews", () => {
         });
     });
   });
-
   describe("GET - Comment Count: /api/reviews/:review_id", () => {
     test("200: responds with a review object containing an additional key of comment count with the value of 0 when the comment does not exist", () => {
       const review_id = 9;
@@ -158,7 +158,6 @@ describe("API: /api/reviews", () => {
         });
     });
   });
-
   describe("GET - errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = "invalid_type";
@@ -180,27 +179,86 @@ describe("API: /api/reviews", () => {
     });
   });
 
+  describe("GET: /api/reviews/:review_id/comment", () => {
+    test("200: responds with a comment object", () => {
+      const review_id = 3;
+
+      return request(app)
+        .get(`/api/reviews/${review_id}/comment`)
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toHaveLength(3);
+          expect(comments).toBeInstanceOf(Array);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                review_id: expect.any(Number),
+                created_at: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: responds with a empty comment array when review exists but no comment posted yet", () => {
+      const review_id = 1;
+
+      return request(app)
+        .get(`/api/reviews/${review_id}/comment`)
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toBeInstanceOf(Object);
+          expect(comments).toEqual([]);
+        });
+    });
+  });
+  describe("GET - errors: /api/reviews/:review_id/comment", () => {
+    test("400: responds with a error message when wrong data is passed in the review_id", () => {
+      const review_id = "invalid_id";
+
+      return request(app)
+        .get(`/api/reviews/${review_id}/comment`)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
+        });
+    });
+    test("404 responds with a error message when the input is correct however the number does not exist in the data base", () => {
+      const review_id = 999;
+
+      return request(app)
+        .get(`/api/${review_id}/comment`)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("invalid endpoint");
+        });
+    });
+  });
+
   describe("PATCH: /api/reviews/:review_id", () => {
-    test("201: responds with a votes incrementing by inc_vote", () => {
+    test("200: responds with a votes incrementing by inc_vote", () => {
       const review_id = 1;
 
       return request(app)
         .patch(`/api/reviews/${review_id}`)
         .send({ inc_votes: 5 })
-        .expect(201)
+        .expect(200)
         .then(({ body: { review } }) => {
           expect(review.votes).toBe(6);
           expect(review.review_id).toBe(1);
         });
     });
-    test("201: responds with a votes decrementing by inc_vote", () => {
+    test("200: responds with a votes decrementing by inc_vote", () => {
       const review_id = 1;
       const inc_vote = { inc_votes: -100 };
 
       return request(app)
         .patch(`/api/reviews/${review_id}`)
         .send(inc_vote)
-        .expect(201)
+        .expect(200)
         .then(({ body: { review } }) => {
           expect(review).toBeInstanceOf(Object);
           expect(review.votes).toBe(-99);
