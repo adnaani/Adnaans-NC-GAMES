@@ -339,6 +339,22 @@ describe("API: /api/reviews", () => {
           });
       });
     });
+    describe.only("POST - errors: /api/reviews/:review_id/comments", () => {
+      test("400: responds with error message when body does not contain both mandatory keys ", () => {
+        const review_id = 1;
+        const newComment = {
+          notAuthor: "invalid_author",
+          notBody: "invalid_body",
+        };
+        return request(app)
+          .post(`/api/reviews/${review_id}/comments`)
+          .send(newComment)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is missing");
+          });
+      });
+    });
   });
 });
 

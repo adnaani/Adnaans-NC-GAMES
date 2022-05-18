@@ -48,8 +48,10 @@ exports.postCommentByReviewsId = (req, res, next) => {
   const { body } = req;
   const { review_id } = req.params;
 
-  insertCommentByReviewsId(body, review_id).then((comment) => {
-    console.log(comment, "comment");
-    res.status(201).send({ comment });
-  });
+  insertCommentByReviewsId(body, review_id)
+    .then((comment) => {
+      console.log(comment, "comment");
+      res.status(201).send({ comment });
+    })
+    .catch(next);
 };
