@@ -3,6 +3,7 @@ const testData = require("../db/data/test-data");
 const request = require("supertest");
 const app = require("../app.js");
 const db = require("../db/connection");
+require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -64,6 +65,14 @@ describe("API: /api/reviews", () => {
               })
             );
           });
+        });
+    });
+    test("200: responds with array of reviews objects, which is sorted by in ascending date", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeSortedBy("created_at");
         });
     });
   });
