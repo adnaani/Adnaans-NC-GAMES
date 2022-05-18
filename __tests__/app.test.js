@@ -187,7 +187,6 @@ describe("API: /api/reviews", () => {
         .get(`/api/reviews/${review_id}/comment`)
         .expect(200)
         .then(({ body: { comments } }) => {
-          console.log(comments);
           expect(comments).toHaveLength(3);
           expect(comments).toBeInstanceOf(Array);
           comments.forEach((comment) => {
@@ -213,6 +212,18 @@ describe("API: /api/reviews", () => {
         .then(({ body: { comments } }) => {
           expect(comments).toBeInstanceOf(Object);
           expect(comments).toEqual([]);
+        });
+    });
+  });
+  describe("GET - errors: /api/reviews/:review_id/comment", () => {
+    test("400: responds with a error message when wrong data is passed in the review_id", () => {
+      const review_id = "invalid_id";
+
+      return request(app)
+        .get(`/api/reviews/${review_id}/comment`)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
         });
     });
   });
