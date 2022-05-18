@@ -44,6 +44,14 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ message: "input does not exist" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, req, res, next) => {
   if (err.status) {
     res.status(err.status).send({ message: err.message });
   } else {

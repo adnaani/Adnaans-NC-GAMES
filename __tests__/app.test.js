@@ -339,7 +339,7 @@ describe("API: /api/reviews", () => {
           });
       });
     });
-    describe.only("POST - errors: /api/reviews/:review_id/comments", () => {
+    describe("POST - errors: /api/reviews/:review_id/comments", () => {
       test("400: responds with error message when body does not contain both mandatory keys ", () => {
         const review_id = 1;
         const newComment = {
@@ -352,6 +352,34 @@ describe("API: /api/reviews", () => {
           .expect(400)
           .then(({ body: { message } }) => {
             expect(message).toBe("input is missing");
+          });
+      });
+      test("404: responds with error message when review_id in path does not exist", () => {
+        const review_id = 999;
+        const newComment = {
+          body: "This is a cool game",
+          author: "mallionaire",
+        };
+        return request(app)
+          .post(`/api/reviews/${review_id}/comments`)
+          .send(newComment)
+          .expect(404)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input does not exist");
+          });
+      });
+      test("404: responds with error message when user does not exist", () => {
+        const review_id = 2;
+        const newComment = {
+          body: "This is a cool game",
+          author: "dont_exist",
+        };
+        return request(app)
+          .post(`/api/reviews/${review_id}/comments`)
+          .send(newComment)
+          .expect(404)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input does not exist");
           });
       });
     });
