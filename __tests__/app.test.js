@@ -180,25 +180,28 @@ describe("API: /api/reviews", () => {
   });
 
   describe("GET: /api/reviews/:review_id/comment", () => {
-    test("200: responds with a comment object containing the keys: comment_id, body, votes, author, review_id, created_at", () => {
-      const review_id = 1;
-      const time = new Date(1616874588110).toISOString();
+    test("200: responds with a comment object", () => {
+      const review_id = 3;
 
       return request(app)
         .get(`/api/reviews/${review_id}/comment`)
         .expect(200)
-        .then(({ body: { reviews } }) => {
-          expect(reviews).toBeInstanceOf(Object);
-          expect(reviews).toEqual(
-            expect.objectContaining({
-              comment_id: 1,
-              body: "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
-              votes: 10,
-              author: "philippaclaire9",
-              review_id: 3,
-              created_at: time,
-            })
-          );
+        .then(({ body: { comments } }) => {
+          console.log(comments);
+          expect(comments).toHaveLength(3);
+          expect(comments).toBeInstanceOf(Array);
+          comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                review_id: expect.any(Number),
+                created_at: expect.any(String),
+              })
+            );
+          });
         });
     });
   });

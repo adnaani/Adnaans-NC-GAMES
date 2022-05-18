@@ -55,3 +55,15 @@ exports.selectAllReviews = async () => {
 
   return rows;
 };
+
+exports.selectCommentsByReviewsId = async (review_id) => {
+  const commentQueryStr = `
+    SELECT *
+    FROM comments
+    WHERE review_id = $1`;
+  const commentValue = [review_id];
+
+  const { rows } = await db.query(commentQueryStr, commentValue);
+
+  return rows;
+};
