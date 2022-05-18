@@ -42,7 +42,7 @@ describe("API: /api/categories", () => {
 
 describe("API: /api/reviews", () => {
   describe("GET: /api/reviews", () => {
-    test("200: responds with array of reviews objects containing the properties of, describe and slug  ", () => {
+    test("200: responds with array of reviews objects", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
@@ -57,7 +57,6 @@ describe("API: /api/reviews", () => {
                 designer: expect.any(String),
                 owner: expect.any(String),
                 review_img_url: expect.any(String),
-                review_body: expect.any(String),
                 category: expect.any(String),
                 created_at: expect.any(String),
                 votes: expect.any(Number),
@@ -67,7 +66,7 @@ describe("API: /api/reviews", () => {
           });
         });
     });
-    test("200: responds with array of reviews objects, which is sorted by in ascending date", () => {
+    test("200: responds with array of reviews objects sorted in ascending order by the date", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
