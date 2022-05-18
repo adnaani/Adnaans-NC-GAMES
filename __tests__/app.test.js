@@ -75,6 +75,7 @@ describe("API: /api/reviews", () => {
         });
     });
   });
+
   describe("GET: /api/reviews/:review_id", () => {
     test("200: responds with a review object containing the keys: review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at,", () => {
       const review_id = 1;
@@ -102,7 +103,6 @@ describe("API: /api/reviews", () => {
         });
     });
   });
-
   describe("GET - Comment Count: /api/reviews/:review_id", () => {
     test("200: responds with a review object containing an additional key of comment count with the value of 0 when the comment does not exist", () => {
       const review_id = 9;
@@ -158,7 +158,6 @@ describe("API: /api/reviews", () => {
         });
     });
   });
-
   describe("GET - errors: /api/reviews/:review_id", () => {
     test("400: responds with an error message when passed an endpoint with an incorrect data type", () => {
       const review_id = "invalid_type";
@@ -176,6 +175,30 @@ describe("API: /api/reviews", () => {
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).toBe(`review with id: ${review_id} does not exist`);
+        });
+    });
+  });
+
+  describe("GET: /api/reviews/:review_id/comment", () => {
+    test("200: responds with a comment object containing the keys: comment_id, body, votes, author, review_id, created_at", () => {
+      const review_id = 1;
+      const time = new Date(1616874588110).toISOString();
+
+      return request(app)
+        .get(`/api/reviews/${review_id}/comment`)
+        .expect(200)
+        .then(({ body: { reviews } }) => {
+          expect(reviews).toBeInstanceOf(Object);
+          expect(reviews).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: "Not sure about dogs, but my cat likes to get involved with board games, the boxes are their particular favourite",
+              votes: 10,
+              author: "philippaclaire9",
+              review_id: 3,
+              created_at: time,
+            })
+          );
         });
     });
   });

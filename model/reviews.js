@@ -52,6 +52,6 @@ exports.selectAllReviews = async () => {
     ORDER BY created_at`;
 
   const { rows } = await db.query(reviewsQueryStr);
-  console.log(rows);
+
   return rows;
 };
