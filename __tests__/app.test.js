@@ -204,6 +204,17 @@ describe("API: /api/reviews", () => {
           });
         });
     });
+    test("200: responds with a empty comment array when review exists but no comment posted yet", () => {
+      const review_id = 1;
+
+      return request(app)
+        .get(`/api/reviews/${review_id}/comment`)
+        .expect(200)
+        .then(({ body: { comments } }) => {
+          expect(comments).toBeInstanceOf(Object);
+          expect(comments).toEqual([]);
+        });
+    });
   });
 
   describe("PATCH: /api/reviews/:review_id", () => {
