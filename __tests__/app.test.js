@@ -77,13 +77,36 @@ describe("API: /api/reviews", () => {
   });
 
   describe("QUERIES: /api/reviews", () => {
-    test("200: responds with array of reviews object sorted in ascending order, date defautlt", () => {
-      return request(app)
-        .get("/api/reviews")
-        .expect(200)
-        .then(({ body: { reviews } }) => {
-          expect(reviews).toBeSortedBy("created_at");
-        });
+    describe("GET - SORT_BY: /api/reviews", () => {
+      test("200: responds with array of reviews object sorted in ascending order by date default", () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at");
+          });
+      });
+      test("200: responds with array of reviews object sorted in ascending order by votes", () => {
+        const query = "votes";
+        return request(app)
+          .get(`/api/reviews?sort_by=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy(query);
+          });
+      });
+    });
+    describe("SORT_BY - error : /api/reviews", () => {
+      test("400: responds with error message when passed an endpoint with an incorrect data type", () => {
+        const query = "hello";
+
+        return request(app)
+          .get(`/api/reviews?sort_by=${query}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
     });
   });
 
