@@ -9,13 +9,12 @@ const {
 } = require("./controller/reviews");
 const { getAllUsers } = require("./controller/users");
 const {
-  handlePSQLErrorOne,
-  handlePSQLErrorTwo,
-  handlePSQLErrorThree,
+  handlePSQLError,
   handleCustomError,
   handleAll404Error,
   handleServerError,
-} = require("./controller/error");
+} = require("./controller/errors");
+
 const app = express();
 app.use(express.json());
 
@@ -33,11 +32,7 @@ app.get("/api/users", getAllUsers);
 
 app.all("/*", handleAll404Error);
 
-app.use(handlePSQLErrorOne);
-
-app.use(handlePSQLErrorTwo);
-
-app.use(handlePSQLErrorThree);
+app.use(handlePSQLError);
 
 app.use(handleCustomError);
 
