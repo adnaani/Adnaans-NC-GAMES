@@ -171,18 +171,8 @@ describe("API: /api/reviews", () => {
           .get(`/api/reviews?category=${query}`)
           .expect(200)
           .then(({ body: { reviews } }) => {
-            // expect(reviews).toBeInstanceOf(Object);
             expect(reviews).toEqual([]);
           });
-
-        //   const query = "social deduction";
-
-        //   return request(app)
-        //     .get(`/api/reviews?category=${query}`)
-        //     .expect(200)
-        //     .then(({ body: { reviews } }) => {
-        //       expect(reviews).toHaveLength(11);
-        //     });
       });
     });
     describe("CATEGORY - error : /api/reviews", () => {
@@ -552,6 +542,38 @@ describe("API: /api/users", () => {
         .expect(404)
         .then(({ body: { message } }) => {
           expect(message).toBe("invalid endpoint");
+        });
+    });
+  });
+});
+
+describe("API: /api/comments", () => {
+  describe("DELETE: /api/comments/:comment_id", () => {
+    test("204: delete the passed comment", () => {
+      const comment_id = 1;
+
+      return request(app).delete(`/api/comments/${comment_id}`).expect(204);
+    });
+  });
+  describe("DELETE - error: /api/comments/:comment_id", () => {
+    test("400: responds with error message when comment_id is invalid data type", () => {
+      const comment_id = "invalid";
+
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(400)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("input is not valid");
+        });
+    });
+    test("404: responds with error message when comment_id is invalid data type", () => {
+      const comment_id = 999;
+
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe(`comment id: ${comment_id} does not exist`);
         });
     });
   });
