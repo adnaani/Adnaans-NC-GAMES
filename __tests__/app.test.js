@@ -165,7 +165,7 @@ describe("API: /api/reviews", () => {
       });
     });
     describe("CATEGORY - error : /api/reviews", () => {
-      test.only("404: responds with error message when passed a non-existent category", () => {
+      test("404: responds with error message when passed a non-existent category", () => {
         const query = "invalid";
 
         return request(app)
