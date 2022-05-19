@@ -63,7 +63,6 @@ exports.selectAllReviews = async ({
     return Promise.reject({ status: 400, message: "input is not valid" });
   }
 
-  console.log(category);
   if (category) {
     let checkCategoryQueryStr = `
       SELECT *
