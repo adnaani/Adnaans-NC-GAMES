@@ -66,13 +66,146 @@ describe("API: /api/reviews", () => {
           });
         });
     });
-    test("200: responds with array of reviews objects sorted in ascending order by the date", () => {
+    test("200: responds with array of reviews objects sorted in descending order by the date", () => {
       return request(app)
         .get("/api/reviews")
         .expect(200)
         .then(({ body: { reviews } }) => {
-          expect(reviews).toBeSortedBy("created_at");
+          expect(reviews).toBeSortedBy("created_at", {
+            descending: true,
+          });
         });
+    });
+  });
+
+  describe("QUERIES: /api/reviews", () => {
+    describe("GET - SORT_BY: /api/reviews", () => {
+      test("200: responds with array of reviews object sorted in descending order by date default", () => {
+        return request(app)
+          .get("/api/reviews")
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+            });
+          });
+      });
+      test("200: responds with array of reviews object sorted in descending order by votes", () => {
+        const query = "votes";
+        return request(app)
+          .get(`/api/reviews?sort_by=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy(query, {
+              descending: true,
+            });
+          });
+      });
+    });
+    describe("SORT_BY - error : /api/reviews", () => {
+      test("400: responds with error message when passed an endpoint with an incorrect data type", () => {
+        const query = "hello";
+
+        return request(app)
+          .get(`/api/reviews?sort_by=${query}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+    });
+
+    describe("GET - ORDER: /api/reviews", () => {
+      test("200: responds with array of reviews object sorted in descending order by default", () => {
+        return request(app)
+          .get(`/api/reviews`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at", {
+              descending: true,
+            });
+          });
+      });
+      test("200: responds with array of reviews object sorted in ascending order by created_at", () => {
+        const query = "ASC";
+        return request(app)
+          .get(`/api/reviews?order=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toBeSortedBy("created_at");
+          });
+      });
+    });
+    describe("ORDER - error : /api/reviews", () => {
+      test("400: responds with error message when passed an endpoint with an incorrect data type", () => {
+        const query = "not_valid";
+
+        return request(app)
+          .get(`/api/reviews?order=${query}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe("input is not valid");
+          });
+      });
+    });
+
+    describe("GET - CATEGORY: /api/reviews", () => {
+      test("200: responds with array of reviews object filtered by category", () => {
+        const query = "social deduction";
+
+        return request(app)
+          .get(`/api/reviews?category=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toHaveLength(11);
+            reviews.forEach(({ category }) => {
+              expect(category).toBe(query);
+            });
+          });
+      });
+
+      test("200: responds with empty array when category exists but there's no reviews associated", () => {
+        const query = "children's games";
+
+        return request(app)
+          .get(`/api/reviews?category=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            // expect(reviews).toBeInstanceOf(Object);
+            expect(reviews).toEqual([]);
+          });
+
+        //   const query = "social deduction";
+
+        //   return request(app)
+        //     .get(`/api/reviews?category=${query}`)
+        //     .expect(200)
+        //     .then(({ body: { reviews } }) => {
+        //       expect(reviews).toHaveLength(11);
+        //     });
+      });
+    });
+    describe("CATEGORY - error : /api/reviews", () => {
+      test("400: responds with error message when passed a category with wrong data type", () => {
+        const query = 999;
+
+        return request(app)
+          .get(`/api/reviews?category=${query}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe(`input is not valid`);
+          });
+      });
+      test("404: responds with error message when passed a non-existent category", () => {
+        const category = "bananas";
+
+        return request(app)
+          .get(`/api/reviews?category=${category}`)
+          .expect(404)
+          .then(({ body: { message } }) => {
+            expect(message).toBe(`category: ${category} does not exist`);
+          });
+      });
     });
   });
 
@@ -193,6 +326,7 @@ describe("API: /api/reviews", () => {
             expect(review.review_id).toBe(1);
           });
       });
+
       test("200: responds with a votes decrementing by inc_vote", () => {
         const review_id = 1;
         const inc_vote = { inc_votes: -100 };
@@ -221,6 +355,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input is not valid");
           });
       });
+
       test("400: responds with an error message when passed an endpoint where review_id is invalid data type", () => {
         const review_id = "invalid";
         const inc_vote = { inc_votes: "3" };
@@ -310,6 +445,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input is not valid");
           });
       });
+
       test("404 responds with a error message when the input is correct however the number does not exist in the data base", () => {
         const review_id = 999;
 
@@ -354,6 +490,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input is missing");
           });
       });
+
       test("404: responds with error message when review_id in path does not exist", () => {
         const review_id = 999;
         const newComment = {
@@ -368,6 +505,7 @@ describe("API: /api/reviews", () => {
             expect(message).toBe("input does not exist");
           });
       });
+
       test("404: responds with error message when user does not exist", () => {
         const review_id = 2;
         const newComment = {

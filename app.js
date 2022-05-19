@@ -1,13 +1,20 @@
 const express = require("express");
-const { getAllCategories } = require("./controller/categories");
+const { getAllCategories } = require("./controller/categories.controller");
 const {
   getAllReviews,
   getReviewById,
   patchReviewById,
   getCommentsByReviewsId,
   postCommentByReviewsId,
-} = require("./controller/reviews");
-const { getAllUsers } = require("./controller/users");
+} = require("./controller/reviews.controller");
+const { getAllUsers } = require("./controller/users.controller");
+const {
+  handlePSQLError,
+  handleCustomError,
+  handleAll404Error,
+  handleServerError,
+} = require("./controller/errors.controller");
+
 const app = express();
 app.use(express.json());
 
@@ -23,44 +30,12 @@ app.post("/api/reviews/:review_id/comments", postCommentByReviewsId);
 
 app.get("/api/users", getAllUsers);
 
-app.all("/*", (req, res, next) => {
-  res.status(404).send({ message: "invalid endpoint" });
-});
+app.all("/*", handleAll404Error);
 
-app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ message: "input is not valid" });
-  } else {
-    next(err);
-  }
-});
+app.use(handlePSQLError);
 
-app.use((err, req, res, next) => {
-  if (err.code === "23502") {
-    res.status(400).send({ message: "input is missing" });
-  } else {
-    next(err);
-  }
-});
+app.use(handleCustomError);
 
-app.use((err, req, res, next) => {
-  if (err.code === "23503") {
-    res.status(404).send({ message: "input does not exist" });
-  } else {
-    next(err);
-  }
-});
+app.use(handleServerError);
 
-app.use((err, req, res, next) => {
-  if (err.status) {
-    res.status(err.status).send({ message: err.message });
-  } else {
-    next(err);
-  }
-});
-
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send({ message: "internal server error" });
-});
 module.exports = app;
