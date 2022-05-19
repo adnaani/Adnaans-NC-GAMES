@@ -163,16 +163,47 @@ describe("API: /api/reviews", () => {
             });
           });
       });
-    });
-    describe("CATEGORY - error : /api/reviews", () => {
-      test("404: responds with error message when passed a non-existent category", () => {
-        const query = "invalid";
+
+      test("200: responds with empty array when category exists but there's no reviews associated", () => {
+        const query = "children's games";
 
         return request(app)
           .get(`/api/reviews?category=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            // expect(reviews).toBeInstanceOf(Object);
+            expect(reviews).toEqual([]);
+          });
+
+        //   const query = "social deduction";
+
+        //   return request(app)
+        //     .get(`/api/reviews?category=${query}`)
+        //     .expect(200)
+        //     .then(({ body: { reviews } }) => {
+        //       expect(reviews).toHaveLength(11);
+        //     });
+      });
+    });
+    describe("CATEGORY - error : /api/reviews", () => {
+      test("400: responds with error message when passed a category with wrong data type", () => {
+        const query = 999;
+
+        return request(app)
+          .get(`/api/reviews?category=${query}`)
+          .expect(400)
+          .then(({ body: { message } }) => {
+            expect(message).toBe(`input is not valid`);
+          });
+      });
+      test("404: responds with error message when passed a non-existent category", () => {
+        const category = "bananas";
+
+        return request(app)
+          .get(`/api/reviews?category=${category}`)
           .expect(404)
           .then(({ body: { message } }) => {
-            expect(message).toBe(`category: ${query} does not exist`);
+            expect(message).toBe(`category: ${category} does not exist`);
           });
       });
     });
