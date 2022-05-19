@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const categories = require("../db/data/test-data/categories");
 
 exports.selectReviewById = async (review_id) => {
   const reviewQueryStr = `SELECT reviews.*, COUNT(comments.review_id) AS comment_count
@@ -42,31 +43,38 @@ exports.updateReviewById = async (review_id, { inc_votes } = 0) => {
 exports.selectAllReviews = async ({
   sort_by = "created_at",
   order = "DESC",
+  category,
 }) => {
   const validSortBy = ["created_at", "votes"];
   const validOrderBy = ["DESC", "ASC"];
+  const validCategory = [];
 
   let reviewsQueryStr = `
-    SELECT reviews.*, COUNT(comments.review_id) AS comment_count
-    FROM reviews
-    LEFT JOIN comments
-    ON comments.review_id = reviews.review_id
-    GROUP BY reviews.review_id`;
+  SELECT reviews.*, COUNT(comments.review_id) AS comment_count
+  FROM reviews
+  LEFT JOIN comments
+  ON comments.review_id = reviews.review_id`;
 
-  if (validSortBy.includes(sort_by)) {
-    reviewsQueryStr += ` ORDER BY reviews.${sort_by}`;
-  } else {
+  if (!validOrderBy.includes(order) || !validSortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, message: "input is not valid" });
   }
 
-  if (validOrderBy.includes(order)) {
-    reviewsQueryStr += ` ${order}`;
-  } else {
-    return Promise.reject({ status: 400, message: "input is not valid" });
+  if (category) {
+    reviewsQueryStr += ` WHERE reviews.category = $1`;
+    validCategory.push(category);
   }
 
-  const { rows } = await db.query(reviewsQueryStr);
+  reviewsQueryStr += ` 
+    GROUP BY reviews.review_id
+    ORDER BY reviews.${sort_by} ${order}`;
 
+  const { rows } = await db.query(reviewsQueryStr, validCategory);
+  if (!rows.length) {
+    return Promise.reject({
+      status: 404,
+      message: `category: ${category} does not exist`,
+    });
+  }
   return rows;
 };
 

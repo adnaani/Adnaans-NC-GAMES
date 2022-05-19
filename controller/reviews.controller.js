@@ -4,7 +4,7 @@ const {
   updateReviewById,
   selectCommentsByReviewsId,
   insertCommentByReviewsId,
-} = require("../model/reviews");
+} = require("../model/reviews.model");
 
 exports.getReviewById = (req, res, next) => {
   const { review_id } = req.params;
@@ -28,7 +28,6 @@ exports.patchReviewById = (req, res, next) => {
 
 exports.getAllReviews = (req, res, next) => {
   const { query } = req;
-  // console.log();
 
   selectAllReviews(query)
     .then((reviews) => {

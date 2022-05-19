@@ -1,19 +1,19 @@
 const express = require("express");
-const { getAllCategories } = require("./controller/categories");
+const { getAllCategories } = require("./controller/categories.controller");
 const {
   getAllReviews,
   getReviewById,
   patchReviewById,
   getCommentsByReviewsId,
   postCommentByReviewsId,
-} = require("./controller/reviews");
-const { getAllUsers } = require("./controller/users");
+} = require("./controller/reviews.controller");
+const { getAllUsers } = require("./controller/users.controller");
 const {
   handlePSQLError,
   handleCustomError,
   handleAll404Error,
   handleServerError,
-} = require("./controller/errors");
+} = require("./controller/errors.controller");
 
 const app = express();
 app.use(express.json());

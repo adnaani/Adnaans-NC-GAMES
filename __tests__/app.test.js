@@ -148,6 +148,34 @@ describe("API: /api/reviews", () => {
           });
       });
     });
+
+    describe("GET - CATEGORY: /api/reviews", () => {
+      test("200: responds with array of reviews object filtered by category", () => {
+        const query = "social deduction";
+
+        return request(app)
+          .get(`/api/reviews?category=${query}`)
+          .expect(200)
+          .then(({ body: { reviews } }) => {
+            expect(reviews).toHaveLength(11);
+            reviews.forEach(({ category }) => {
+              expect(category).toBe(query);
+            });
+          });
+      });
+    });
+    describe("CATEGORY - error : /api/reviews", () => {
+      test.only("404: responds with error message when passed a non-existent category", () => {
+        const query = "invalid";
+
+        return request(app)
+          .get(`/api/reviews?category=${query}`)
+          .expect(404)
+          .then(({ body: { message } }) => {
+            expect(message).toBe(`category: ${query} does not exist`);
+          });
+      });
+    });
   });
 
   describe("PARAM: /api/reviews/:review_id", () => {
