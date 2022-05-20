@@ -566,7 +566,7 @@ describe("API: /api/comments", () => {
           expect(message).toBe("input is not valid");
         });
     });
-    test("404: responds with error message when comment_id is invalid data type", () => {
+    test("404: responds with error message when comment_id does not exist", () => {
       const comment_id = 999;
 
       return request(app)
