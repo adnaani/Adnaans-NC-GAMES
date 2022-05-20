@@ -3,10 +3,34 @@ const testData = require("../db/data/test-data");
 const request = require("supertest");
 const app = require("../app.js");
 const db = require("../db/connection");
+const jsonFile = require("../endpoints.json");
 require("jest-sorted");
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
+
+describe("API: /api", () => {
+  describe("GET: /api", () => {
+    test("200: responds with JSON object describing all the available endpoints on your API, ", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual(jsonFile);
+        });
+    });
+  });
+  describe("GET - errors: /api", () => {
+    test("404: responds with error message page not found", () => {
+      return request(app)
+        .get("/invalid_categories")
+        .expect(404)
+        .then(({ body: { message } }) => {
+          expect(message).toBe("invalid endpoint");
+        });
+    });
+  });
+});
 
 describe("API: /api/categories", () => {
   describe("GET: /api/categories", () => {
