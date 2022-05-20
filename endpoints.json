@@ -105,7 +105,10 @@
   "POST /api/reviews/:review_id/comments": {
     "description": "Allows client to post a new comment and serves the new comment.",
     "queries": [],
-    "exampleRequest": {"username": "mallionaire" },
+    "exampleRequest": {
+      "body": "This is a cool game",
+      "author": "mallionaire"
+    },
     "exampleResponse": {
       "comment": {
         "comment_id": 7,
