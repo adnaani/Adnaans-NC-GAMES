@@ -1,6 +1,6 @@
 const express = require("express");
 const { getAllCategories } = require("./controller/categories.controller");
-const { getAllCategories } = require("./controller/api.controller");
+const { getApi } = require("./controller/api.controller");
 const { deleteCommentsById } = require("./controller/comments.controller");
 const {
   getAllReviews,
