@@ -14,7 +14,7 @@ exports.removeCommentsById = async (comment_id) => {
     const commentValue = [comment_id];
 
     const { rows } = await db.query(commentQueryStr, commentValue);
-    console.log(rows);
+
     if (!rows.length) {
       return Promise.reject({
         status: 404,
