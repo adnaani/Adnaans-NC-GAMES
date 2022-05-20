@@ -52,6 +52,7 @@
   "PATCH /api/reviews/:review_id": {
     "description": "Patches a single review vote by review_id.",
     "queries": [],
+    "exampleRequest": {"key": "inc_votes: 1" },
     "exampleResponse": {
       "review": {
         "review_id": 2,
@@ -104,6 +105,7 @@
   "POST /api/reviews/:review_id/comments": {
     "description": "Allows client to post a new comment and serves the new comment.",
     "queries": [],
+    "exampleRequest": {"key": "username: mallionaire" },
     "exampleResponse": {
       "comment": {
         "comment_id": 7,
