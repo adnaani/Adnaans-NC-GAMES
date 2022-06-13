@@ -574,7 +574,7 @@ describe("API: /api/users", () => {
 describe("API: /api/comments", () => {
   describe("DELETE: /api/comments/:comment_id", () => {
     test("204: delete the passed comment", () => {
-      const comment_id = 1;
+      const comment_id = 2;
 
       return request(app).delete(`/api/comments/${comment_id}`).expect(204);
     });
