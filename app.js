@@ -10,8 +10,11 @@ const {
   handleAll404Error,
   handleServerError,
 } = require("./controller/errors.controller");
+const cors = require("cors");
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 app.use("/api", apiRouter);
