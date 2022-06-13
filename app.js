@@ -1,15 +1,9 @@
 const express = require("express");
-const { getAllCategories } = require("./controller/categories.controller");
-const { getApi } = require("./controller/api.controller");
-const { deleteCommentsById } = require("./controller/comments.controller");
-const {
-  getAllReviews,
-  getReviewById,
-  patchReviewById,
-  getCommentsByReviewsId,
-  postCommentByReviewsId,
-} = require("./controller/reviews.controller");
-const { getAllUsers } = require("./controller/users.controller");
+const apiRouter = require("./routes/api-router");
+const categoriesRouter = require("./routes/categories-router");
+const usersRouter = require("./routes/users-router");
+const commentsRouter = require("./routes/comments-router");
+const reviewsRouter = require("./routes/reviews-router");
 const {
   handlePSQLError,
   handleCustomError,
@@ -20,21 +14,11 @@ const {
 const app = express();
 app.use(express.json());
 
-app.get("/api", getApi);
-
-app.get("/api/categories", getAllCategories);
-
-app.get("/api/reviews", getAllReviews);
-
-app.get("/api/reviews/:review_id", getReviewById);
-app.patch("/api/reviews/:review_id", patchReviewById);
-
-app.get("/api/reviews/:review_id/comments", getCommentsByReviewsId);
-app.post("/api/reviews/:review_id/comments", postCommentByReviewsId);
-
-app.delete("/api/comments/:comment_id", deleteCommentsById);
-
-app.get("/api/users", getAllUsers);
+app.use("/api", apiRouter);
+app.use("/api/categories", categoriesRouter);
+app.use("/api/reviews", reviewsRouter);
+app.use("/api/comments", commentsRouter);
+app.use("/api/users", usersRouter);
 
 app.all("/*", handleAll404Error);
 
