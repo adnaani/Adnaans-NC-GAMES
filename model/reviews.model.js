@@ -45,7 +45,7 @@ exports.selectAllReviews = async ({
   order = "DESC",
   category,
 }) => {
-  const validSortBy = ["created_at", "votes"];
+  const validSortBy = ["created_at", "votes", "owner"];
   const validOrderBy = ["DESC", "ASC"];
   const validCategory = [];
 

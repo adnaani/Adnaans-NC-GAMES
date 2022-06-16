@@ -115,7 +115,7 @@ describe("API: /api/reviews", () => {
           });
       });
       test("200: responds with array of reviews object sorted in descending order by votes", () => {
-        const query = "votes";
+        const query = "comment_count";
         return request(app)
           .get(`/api/reviews?sort_by=${query}`)
           .expect(200)
